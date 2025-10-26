@@ -8,6 +8,7 @@ import DashboardPage from './pages/DashboardPage'
 import GoalsPage from './pages/GoalsPage'
 import TransactionsPage from './pages/TransactionsPage'
 import PlaidConnectPage from './pages/PlaidConnectPage'
+import ChatPage from './pages/ChatPage'
 
 function App() {
   const { user, isLoading, checkAuth } = useAuthStore()
@@ -40,6 +41,7 @@ function App() {
         <Route path="/" element={<DashboardPage />} />
         <Route path="/goals" element={<GoalsPage />} />
         <Route path="/transactions" element={<TransactionsPage />} />
+        <Route path="/chat" element={<ChatPage />} />
         <Route path="/connect" element={<PlaidConnectPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

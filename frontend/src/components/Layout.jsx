@@ -10,7 +10,8 @@ import {
   LogOut,
   Menu,
   X,
-  Sparkles
+  Sparkles,
+  MessageSquare
 } from 'lucide-react'
 
 const Layout = ({ children }) => {
@@ -22,6 +23,7 @@ const Layout = ({ children }) => {
     { name: 'Dashboard', href: '/', icon: Home },
     { name: 'Goals', href: '/goals', icon: Target },
     { name: 'Transactions', href: '/transactions', icon: CreditCard },
+    { name: 'AI Assistant', href: '/chat', icon: MessageSquare },
     { name: 'Connect Bank', href: '/connect', icon: LinkIcon },
   ]
 

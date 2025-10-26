@@ -11,6 +11,7 @@ const goalsRoutes = require('./routes/goals');
 const transactionsRoutes = require('./routes/transactions');
 const dashboardRoutes = require('./routes/dashboard');
 const notificationsRoutes = require('./routes/notifications');
+const chatRoutes = require('./routes/chat');
 
 const { errorHandler } = require('./middleware/errorHandler');
 const { authenticateUser } = require('./middleware/auth');
@@ -51,6 +52,7 @@ app.use('/api/goals', authenticateUser, goalsRoutes);
 app.use('/api/transactions', authenticateUser, transactionsRoutes);
 app.use('/api/dashboard', authenticateUser, dashboardRoutes);
 app.use('/api/notifications', authenticateUser, notificationsRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Error handling
 app.use(errorHandler);
