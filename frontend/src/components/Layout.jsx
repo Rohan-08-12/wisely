@@ -13,6 +13,7 @@ import {
   Sparkles,
   MessageSquare
 } from 'lucide-react'
+import logo from '../assets/logo.png'
 
 const Layout = ({ children }) => {
   const { user, logout } = useAuthStore()
@@ -83,8 +84,8 @@ const Layout = ({ children }) => {
         <div className="flex flex-1">
           {/* Sidebar */}
           <div className="flex flex-col w-64 bg-gradient-to-b from-orange-500 to-orange-600 border-r border-orange-700">
-            <div className="flex items-center px-6 py-8 border-b border-orange-600">
-              <h1 className="text-2xl font-bold text-white tracking-wide">wisely<Sparkles className="inline-block h-4 w-4 text-orange-100 ml-1" /></h1>
+            <div className="flex items-center px-6 pb-2 border-b border-orange-600">
+              <h1 className="font-bold text-white tracking-wide"><img src={logo} alt="Wisely"/></h1>
             </div>
             
             <nav className="flex-1 px-4 py-6 space-y-1">

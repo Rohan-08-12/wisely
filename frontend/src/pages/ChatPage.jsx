@@ -1,19 +1,37 @@
 import { useState, useRef, useEffect } from 'react'
-import { Send, MessageSquare, Bot } from 'lucide-react'
+import { Send, MessageSquare, Bot, Trash2 } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
 import api from '../services/api'
 
 const ChatPage = () => {
-  const [messages, setMessages] = useState([
-    {
+  const queryClient = useQueryClient()
+  
+  const loadChatHistory = () => {
+    const saved = localStorage.getItem('chatHistory')
+    if (saved) {
+      try {
+        return JSON.parse(saved).map(msg => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp)
+        }))
+      } catch (e) {}
+    }
+    return [{
       id: 1,
       text: "Hello! I'm your AI financial assistant. How can I help you manage your finances today?",
       sender: 'ai',
       timestamp: new Date()
-    }
-  ])
+    }]
+  }
+  
+  const [messages, setMessages] = useState(loadChatHistory)
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef(null)
+
+  useEffect(() => {
+    localStorage.setItem('chatHistory', JSON.stringify(messages))
+  }, [messages])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -58,6 +76,16 @@ const ChatPage = () => {
         timestamp: new Date(data.timestamp)
       }
       setMessages(prev => [...prev, aiResponse])
+      
+      // If goals were updated, refresh dashboard data
+      if (data.updatedGoals && data.updatedGoals.length > 0) {
+        queryClient.invalidateQueries(['dashboard'])
+        queryClient.invalidateQueries(['goals'])
+        // Show a visual indicator
+        setTimeout(() => {
+          alert('✅ Goals updated! Check your dashboard to see the changes.')
+        }, 500)
+      }
     } catch (error) {
       console.error('Chat error:', error)
       const aiResponse = {
@@ -72,16 +100,37 @@ const ChatPage = () => {
     }
   }
 
+  const handleClearChat = () => {
+    if (window.confirm('Clear all chat history?')) {
+      localStorage.removeItem('chatHistory')
+      setMessages([{
+        id: 1,
+        text: "Hello! I'm your AI financial assistant. How can I help you manage your finances today?",
+        sender: 'ai',
+        timestamp: new Date()
+      }])
+    }
+  }
+
   return (
     <div className="space-y-6 pt-6">
-      <div className="flex items-center space-x-3 mb-6">
-        <div className="bg-orange-500 p-3 rounded-lg">
-          <MessageSquare className="h-6 w-6 text-white" />
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-3">
+          <div className="bg-orange-500 p-3 rounded-lg">
+            <MessageSquare className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">AI Financial Assistant</h1>
+            <p className="text-gray-500">Get personalized financial advice and insights</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">AI Financial Assistant</h1>
-          <p className="text-gray-500">Get personalized financial advice and insights</p>
-        </div>
+        <button
+          onClick={handleClearChat}
+          className="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+        >
+          <Trash2 className="h-5 w-5" />
+          <span>Clear</span>
+        </button>
       </div>
 
       {/* Chat Container */}
