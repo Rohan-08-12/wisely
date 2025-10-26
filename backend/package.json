@@ -1,0 +1,37 @@
+{
+  "name": "wisely-backend",
+  "version": "1.0.0",
+  "description": "Wisely MVP Backend - Personal Finance App",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:seed": "node src/utils/seed.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "dotenv": "^16.3.1",
+    "prisma": "^5.7.1",
+    "@prisma/client": "^5.7.1",
+    "better-auth": "^0.7.0",
+    "plaid": "^13.0.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": ["personal-finance", "plaid", "goals", "budgeting"],
+  "author": "Wisely Team",
+  "license": "MIT"
+}
+

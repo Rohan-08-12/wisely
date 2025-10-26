@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite doesn't support enums, using String instead
+
+model User {
+  id             Int            @id @default(autoincrement())
+  email          String         @unique
+  name           String?
+  authId         String?        @unique
+  goals          Goal[]
+  transactions   Transaction[]
+  notifications  Notification[]
+  plaidItems     PlaidItem[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model Goal {
+  id              Int            @id @default(autoincrement())
+  userId          Int
+  title           String
+  type            String         // "LIMIT" or "SAVINGS"
+  // LIMIT goal fields
+  category        String?        // e.g., "Coffee", "Restaurants" (derived from Plaid category)
+  period          String?        // e.g., "WEEK", "MONTH" (ISO week aligns with Monday)
+  maxSpend        Float?         // e.g., 75.00
+  // SAVINGS goal fields
+  targetAmount    Float?         // e.g., 1000.00
+  currentProgress Float          @default(0)
+  startDate       DateTime       @default(now())
+  user            User           @relation(fields: [userId], references: [id])
+  transactions    Transaction[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model Transaction {
+  id                 Int              @id @default(autoincrement())
+  userId             Int
+  goalId             Int?
+  amount             Float            // positive magnitude; use type to know direction
+  type               String           // "CREDIT" or "DEBIT"
+  date               DateTime
+  description        String
+  merchantName       String?
+  category           String?          // normalized top-level category (e.g., "Coffee")
+  plaidTransactionId String           @unique
+  user               User             @relation(fields: [userId], references: [id])
+  goal               Goal?            @relation(fields: [goalId], references: [id])
+  createdAt          DateTime         @default(now())
+}
+
+model PlaidItem {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  accessToken String   @unique
+  itemId      String   @unique
+  institution String?
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model Notification {
+  id         Int                @id @default(autoincrement())
+  userId     Int
+  type       String             // "LIMIT_HIT" or "SAVINGS_MILESTONE"
+  message    String
+  status     String             @default("UNREAD") // "UNREAD" or "READ"
+  meta       String?            // JSON string instead of Json type
+  createdAt  DateTime           @default(now())
+  user       User               @relation(fields: [userId], references: [id])
+}
